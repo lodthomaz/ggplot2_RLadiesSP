@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Conhecendo o ggplot2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Letícia Thomaz" />
+    <link href="index_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="index_files/remark-css-0.0.1/rladies-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="rladies.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Conhecendo o ggplot2
+## RLadies São Paulo
+### Letícia Thomaz
+### 26/06/2021
+
+---
+
+
+
+
+class: inverse, center, middle
+
+# GGPLOT2
+
+---
+
+# ggplot2
+
+Existem diversas formas de fazer gráficos no R
+
+Uma delas é utilizando o pacote **_ggplot2_**
+
+
+### Por que usar esse pacote? 
+
++ faz gráficos elegantes
++ muito versátil
++ implementa a "gramática dos gráficos" 
+
+
+--
+
+# Instalação
+
+
+```r
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+---
+
+# "Gramática dos Gráficos" 
+
+* É uma ferramenta que segue uma abordagem para descrever e construir gráficos de maneira estruturada
+
+* Um [artigo](http://vita.had.co.nz/papers/layered-grammar.pdf) propôs uma parametrização alternativa dessa gramática em 2005
+
+* Traz a ideia de construir um gráfico a partir de várias **camadas**
+
+* As ideias desse artigo foram implementadas no **_ggplot2_**
+
+.center[![:scale 30%](hex-ggplot2.png)]
+
+---
+
+# Como construir um gráfico?
+
+### Dados
+
+Para criar um gráfico, a primeira coisa que a gente precisa é escolher nossos dados. 
+
+--
+
+### Mapear o que queremos plotar
+
+  * qual variável queremos colocar no eixo x?
+  * qual variável queremos colocar no eixo y?
+  
+--
+
+### Definir qual o objeto geométrico queremos criar
+
+  * ponto?
+  * linha?
+  * barras?
+
+--
+
+### ... Melhorar a estética
+
+---
+
+# Dados 
+
+Para os exemplos dessa apresentação, vou usar dados da série **Friends**.  
+Pra quem quiser rodar os exemplos, é só instalar o pacote `install.packages("friends")`.
+
+
+```r
+# Carregando os dados 
+df_friends_info &lt;- friends::friends_info
+head(df_friends_info)
+```
+
+```
+## # A tibble: 6 x 8
+##   season episode title      directed_by written_by   air_date   us_views_millio~
+##    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        &lt;date&gt;                &lt;dbl&gt;
+## 1      1       1 The Pilot  James Burr~ David Crane~ 1994-09-22             21.5
+## 2      1       2 The One w~ James Burr~ David Crane~ 1994-09-29             20.2
+## 3      1       3 The One w~ James Burr~ Jeffrey Ast~ 1994-10-06             19.5
+## 4      1       4 The One w~ James Burr~ Alexa Junge  1994-10-13             19.7
+## 5      1       5 The One w~ Pamela Fry~ Jeff Greens~ 1994-10-20             18.6
+## 6      1       6 The One w~ Arlene San~ Adam Chase ~ 1994-10-27             18.2
+## # ... with 1 more variable: imdb_rating &lt;dbl&gt;
+```
+
+.center[![:scale 17%](hex-friends.png)]
+
+---
+
+# Mapear o que queremos plotar 
+
+Quero dar uma olhada na relação entre o total de visualizações e a avaliação que o episódio recebeu pelo imdb. 
+Então vou querer plotar no eixo x us_views_millions e no eixo y a variável imdb_rating. 
+
+
+```r
+# Variáveis escolhidas  
+df_friends_info %&gt;% 
+  select(us_views_millions, imdb_rating) %&gt;% 
+  head()
+```
+
+```
+## # A tibble: 6 x 2
+##   us_views_millions imdb_rating
+##               &lt;dbl&gt;       &lt;dbl&gt;
+## 1              21.5         8.3
+## 2              20.2         8.1
+## 3              19.5         8.2
+## 4              19.7         8.1
+## 5              18.6         8.5
+## 6              18.2         8.1
+```
+
+---
+
+# Definir o objeto geométrico
+
+Como as duas variáveis escolhidas são numéricas e eu quero ver a relação entre elas, eu vou escolher fazer um gráficos de pontos.
+
+&lt;br /&gt;
+
+.center[![](scatterplot_examples.png)]
+
+
+---
+
+# Estrutura Básica do ggplot2
+
+--
+
+## Dados 
+
+.center[![](passo1_ggplot2.png)]
+
+---
+
+# Estrutura Básica do ggplot2
+
+## Variáveis
+
+.center[![](passo2_ggplot2.png)]
+
+---
+
+# Estrutura Básica do ggplot2
+
+## Objeto geométrico
+
+.center[![](passo3_ggplot2.png)]
+
+---
+
+### Gráfico de dispersão das visualizações pela nota do episódio
+
+
+```r
+ggplot(data = df_friends_info,
+       mapping = aes(x = us_views_millions, 
+                     y = imdb_rating)) + 
+  geom_point()
+```
+
+--
+
+&lt;img src="index_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Objetos Geométricos
+
+- Gráficos de dispersão: `geom_point()`
+
+- Gráficos de barras: `geom_col()` ou `geom_bar()`
+
+- Gráficos de linhas: `geom_line()`
+
+- Histograma: `geom_hist()`
+
+- Boxplot: `geom_boxplot()`
+
+- Densidade: `geom_density()`
+
+- Suavização: `geom_smooth()`
+
+- Adicionar rótulos ou textos: `geom_label()` ou `geom_text()`
+
+---
+
+## Parâmetros dos Objetos Geométricos
+
+Todos esses objetos geométricos possuem elementos estéticos. Por exemplo:
+
+### geom_point()
+
+Os parâmetros disponíveis são:
+
+- **x**: variável do eixo x
+- **y**: variável do eixo y 
+- **alpha**: controla a transparência dos pontos
+- **colour**: define a cor dos pontos 
+- **fill**: define a cor de preenchimento dos pontos
+- **group**: agrupa os dados por outra variável
+- **shape**: define o formato dos pontos
+- **size**: define o tamanho dos pontos
+- **stroke**: define o tamanho da borda dos pontos
+
+[Saiba mais sobre o geom_point()](https://ggplot2.tidyverse.org/reference/geom_point.html)
+
+---
+
+### Gráfico de dispersão das visualizações pela nota do episódio
+Vamos **colorir** os pontos de acordo com a temporada que aquele episódio pertence
+
+
+```r
+ggplot(data = df_friends_info,
+       mapping = aes(x = us_views_millions, 
+                     y = imdb_rating,
+*                    colour = factor(season))) + 
+  geom_point()
+```
+
+--
+
+&lt;img src="index_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: inverse, middle
+
+# Vamos fazer um exemplo colocando mais algumas camadas?
+
+--
+
+1. Fazer um boxplot da variável *us_views_millions* pela variável *season*
+
+--
+
+2. Adicionar uma **camada** que mostra o valor da média como um ponto no gráfico
+
+--
+
+3. Adicionar uma **camada** que exibe o valor da mediana como texto
+
+--
+
+4. Adicionar uma **camada** de texto que identifica quais são os 2 episódios mais assistidos (outliers)
+
+---
+
+**Obs:** para colocar as medidas (mediana e média) no gráfico, criei uma outra base chamada **df_friends_agrup**.  
+E para identificar os episódios mais assistidos, criei uma base chamada **top_2**.
+
+
+```r
+# Agrupa os dados para pegar a média e mediana
+df_friends_agrup &lt;- df_friends_info %&gt;% 
+  dplyr::group_by(season) %&gt;% 
+  dplyr::summarise(mean_views = mean(us_views_millions),
+                   median_views = median(us_views_millions))
+
+
+# Seleciona os 2 episódios mais assistidos 
+top_2 &lt;- df_friends_info %&gt;% 
+  arrange(desc(us_views_millions)) %&gt;% 
+  select(season, title, us_views_millions) %&gt;% 
+  head(4) %&gt;% 
+  distinct()
+```
+
+
+---
+
+### 1. Boxplot
+
+
+```r
+parte_1 &lt;- 
+  ggplot() + 
+  geom_boxplot(data = df_friends_info, 
+               mapping = aes(x = factor(season),
+                             y = us_views_millions,
+                             fill = factor(season)))
+```
+
+--
+
+![](index_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
+### 2. Boxplot + Média
+
+
+```r
+parte_1e2 &lt;- 
+  parte_1 +
+  geom_point(data = df_friends_agrup,
+             mapping = aes(x = factor(season),
+                           y = mean_views),
+             colour = "yellow", size = 2)
+```
+
+--
+
+![](index_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+---
+
+### 3. Boxplot + Média + Mediana (texto)
+
+
+```r
+parte_1e2e3 &lt;- parte_1e2 +
+  geom_text(data = df_friends_agrup,
+            mapping = aes(x = factor(season),
+                          y = median_views,
+                          label = format(median_views, digits = 1, nsmall = 1)),
+            fontface = "bold", size = 4, vjust = -0.5)
+```
+
+--
+
+![](index_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+
+---
+
+### 4. Boxplot + Média + Mediana (texto) + Top 2 (texto)
+
+
+```r
+parte_1e2e3e4 &lt;- parte_1e2e3 +
+  geom_label(data = top_2,
+            mapping = aes(x = factor(season),
+                          y = us_views_millions,
+                          label = title))
+```
+
+--
+
+![](index_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+
+---
+
+## Código completo ... 
+
+```r
+ggplot() + 
+  # Camada 1
+  geom_boxplot(data = df_friends_info, 
+               mapping = aes(x = factor(season),
+                             y = us_views_millions,
+                             fill = factor(season))) + 
+  # Camada 2 
+  geom_point(data = df_friends_agrup,
+             mapping = aes(x = factor(season),
+                           y = mean_views),
+             colour = "yellow", size = 2) + 
+  # Camada 3
+  geom_text(data = df_friends_agrup,
+            mapping = aes(x = factor(season),
+                          y = median_views,
+                          label = format(median_views, digits = 1, nsmall = 1)),
+            fontface = "bold", size = 4, vjust = -0.5) +
+  # Camada 4
+  geom_label(data = top_2,
+            mapping = aes(x = factor(season),
+                          y = us_views_millions,
+                          label = title))
+```
+
+
+---
+
+## Resultado ... 
+
+&lt;img src="index_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: inverse, middle
+
+### Já sabemos fazer um gráfico simples   😄
+
+### E agora já sabemos como adicionar mais camadas    😄
+
+--
+
+# Como mexer no estilo do gráfico ? 
+# Como deixar ele dentro do padrão da apresentação, por exemplo?
+
+---
+
+### Quase tudo no **ggplot2** pode ser modificado. 
+
+Existe uma folhinha de _"cola"_ ([cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)) que nos motra todos os parâmetros que podemos adicionar em cada um dos objetos geométricos.  
+Ela também mostra que podemos alterar o título do gráfico, título dos eixos, podemos alterar as cores. Uma infinidade de alterações podem ser feitas nas camadas. 
+
+.center[
+![Cheatsheet](imagem_cheatsheet.png)
+]
+
+---
+
+### Quais as camadas de estilo que eu mais uso ???
+
+`labs()`: essa **camada** altera o título do gráfico, o título do eixo y, e título do eixo x.
+
+```r
+grafico + 
+  labs(title = "Título do meu gráfico",
+       x = "Título do meu eixo x",
+       y = "Título do meu eixo y")
+```
+
+`scale_fill_brewer()`: essa **camada** altera as cores do `fill` que acrescentamos no boxplot, por exemplo:
+
+```r
+grafico + 
+  scale_fill_brewer(name = "Temporada", palette = "Set3")
+```
+
+`theme_bw()`, `theme_minimal()`, `theme_classic()`: essa **camada** altera o tema do gráfico:
+
+```r
+grafico + 
+  theme_bw()
+```
+
+---
+
+# theme()
+
+Essa camada é uma forma de customizar os componentes do seu gráfico que não envolvem os dados. Por exemplo: fonte do título, tamanho do título, cor dos textos, tamanho da legenda, etc...  
+Normalmente, é a camada que eu deixo por último!
+
+### O que você consegue alterar com essa camada?
+
+* **plot.title**: título do gráfico (fonte, tamanho, cor, posição)
+* **axis.title**: título dos eixos (fonte, tamanho, cor, posição)
+* **legend.background**: cor do fundo da legenda
+
+Se quiser ver tudo que é possível ser alterado, só clicar nesse [link aqui](https://ggplot2.tidyverse.org/reference/theme.html)!
+
+---
+
+# Vamos deixar aquele boxplot mais bonito?
+
+
+
+
+
+```r
+boxplot_anterior + 
+  # Alterando os títulos
+  labs(title = "Boxplot Us Million Views x Temporada",
+       x = "Temporada",
+       y = "Us Million Views") + 
+  
+  # Alterando a cor para roxo
+  scale_fill_brewer(name = "Temporada", palette = "Set3") + 
+  
+  # Alterando o tema
+  theme_bw() + 
+  
+  # Alterando fontes e tamanhos ... 
+  theme(plot.title = element_text(family = "Ink Free", 
+                                  size = 20,
+                                  face = "bold",
+                                  colour = "#562457",
+                                  hjust = 0.5),
+        text = element_text(family = "Ink Free"),
+        axis.title = element_text(size = 17, face = "bold"),
+        axis.text = element_text(size = 15, face = "bold"),
+        legend.text = element_text(size = 15, face = "bold"),
+        legend.title = element_text(size = 17, face = "bold"))
+```
+
+
+---
+
+### Resultado ...
+
+&lt;img src="index_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse, middle, center
+
+
+## Obrigada!
+
+.center[![:scale 65%](ggplot2_draw.png)]
+&lt;small&gt; Artwork by @allison_horst &lt;/small&gt;
+
+Slides criados usando o pacote [**xaringan**](https://github.com/yihui/xaringan).  
+Todo o material está disponível no [**github!**](https://github.com/lodthomaz/ggplot2)  
+Link da apresentação: [https://lodthomaz.github.io/ggplot2/#1](https://lodthomaz.github.io/ggplot2/#1)  
+Siga as RLadies SP no [**instagram**](https://instagram.com/rladiessaopaulo?igshid=1ij2ofwaxkr2q)  😄 
+
+
+
+---
+
+## Exemplinho extra com geom_col !!!
+
+Dentro do pacote de `friends` tem uma base com as emoções de cada cena das 4 temporadas iniciais.  
+Quero saber tem alguma temporada com mais cenas neutras que as demais, por exemplo. 
+
+
+```r
+# Dados 
+df_emotions &lt;- friends::friends_emotions
+
+# Agrupando a base emotions por temporada e emoção 
+emotions_agrup &lt;- df_emotions %&gt;% 
+  dplyr::group_by(season, emotion) %&gt;% 
+  dplyr::summarise(qtde = n()) %&gt;% 
+  mutate(qtde_percent = qtde / sum(qtde))
+
+head(emotions_agrup, 4)
+```
+
+```
+## # A tibble: 4 x 4
+## # Groups:   season [1]
+##   season emotion   qtde qtde_percent
+##    &lt;int&gt; &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;
+## 1      1 Joyful     599       0.207 
+## 2      1 Mad        309       0.107 
+## 3      1 Neutral   1241       0.428 
+## 4      1 Peaceful   112       0.0386
+```
+
+---
+
+### Exemplinho extra com geom_col !!!
+&lt;small&gt;
+Para ver a proporção de cada emoção nas temporadas, podemos fazer um gráfico de barras que some 100%.
+&lt;/small&gt;
+
+
+```r
+emotions_agrup %&gt;% # dados que agrupamos no slide anterior 
+  ggplot() + 
+  geom_col(mapping = aes(x = season, y = qtde,
+                         fill = emotion,  # vamos preencher as barras de acordo com a emoção
+                         group = emotion), 
+           position = 'fill',     # esse parâmetro faz a barra somar 100%
+           color = "black") + 
+  geom_label(aes(x = season, y = qtde, group = emotion,
+                 label = scales::percent(qtde_percent,accuracy = .1)),  # ajusta o label para percentual
+             position = position_fill(vjust = 0.5), family= "Ink Free", fontface = "bold", size=4) +
+  scale_y_continuous(labels = scales::percent) + 
+  # Alterando os títulos
+  labs(title = "Proporção de Emoções por Temporada",
+       x = "Temporada",
+       y = "Proporção de Emoções (%)") + 
+  # Alterando a cor da paleta
+  scale_fill_brewer(name = "Temporada", palette = "Set3") + 
+  # Alterando o tema
+  theme_bw() + 
+  # Alterando fontes e tamanhos ... 
+  theme(plot.title = element_text(family = "Ink Free", size = 20, face = "bold", hjust = 0.5),
+        text = element_text(family = "Ink Free"),
+        axis.title = element_text(size = 17, face = "bold"),
+        axis.text = element_text(size = 15, face = "bold"),
+        legend.text = element_text(size = 15, face = "bold"),
+        legend.title = element_text(size = 17, face = "bold"))
+```
+
+
+---
+
+## Resultado ...
+
+&lt;img src="index_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="./macro/macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "github"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
